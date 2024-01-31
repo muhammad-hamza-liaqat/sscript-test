@@ -1,9 +1,9 @@
 const express = require("express");
 const app = express();
-require("dotenv").config()
-const bodyParser = require("body-parser");
-const cors = require("cors");
-
+require("dotenv").config(); // env file require 
+const bodyParser = require("body-parser"); // middleware
+const cors = require("cors"); // middleware
+require("./database/connection"); // database connection
 // middlewares
 app.use(bodyParser.json());
 app.use(cors());
