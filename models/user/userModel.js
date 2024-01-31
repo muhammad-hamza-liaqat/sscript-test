@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../../database/connection");
+const Joi = require("joi"); // for more validations
 
 const userModel = sequelize.define(
   "users",
@@ -70,4 +71,31 @@ const userModel = sequelize.define(
   }
 );
 
-module.exports = userModel;
+const userJoiValidations = {
+  name: Joi.string()
+    .pattern(/^[a-zA-Z]+$/)
+    .message("Name should contain only alphabetical characters."),
+  age: Joi.number()
+    .integer()
+    .min(0)
+    .message("Age must be a non-negative integer."),
+  email: Joi.string().email().message("Invalid email format."),
+  dateOfBirth: Joi.date().iso().message("Invalid Date of Birth format."),
+};
+
+
+function userValidations(user) {
+    const schema = Joi.object({
+      name: userJoiValidations.name,
+      age: userJoiValidations.age,
+      email: userJoiValidations.email,
+      dateOfBirth: userJoiValidations.dateOfBirth,
+    });
+  
+    const result = schema.validate(user, { abortEarly: false });
+  
+    const errors = result.error ? result.error.details.map((error) => error.message) : [];
+  
+    return errors;
+  }
+module.exports = {userModel, userValidations};
