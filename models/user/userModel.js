@@ -1,6 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../../database/connection");
-const Joi = require("joi"); // for more validations
+const Joi = require("joi");
 
 const userModel = sequelize.define(
   "users",
@@ -43,6 +43,7 @@ const userModel = sequelize.define(
     email: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
       validate: {
         notNull: {
           msg: "Email is required.",
@@ -71,25 +72,15 @@ const userModel = sequelize.define(
   }
 );
 
-const userJoiValidations = {
-  name: Joi.string()
-    .pattern(/^[a-zA-Z]+$/)
-    .message("Name should contain only alphabetical characters."),
-  age: Joi.number()
-    .integer()
-    .min(0)
-    .message("Age must be a non-negative integer."),
-  email: Joi.string().email().message("Invalid email format."),
-  dateOfBirth: Joi.date().iso().message("Invalid Date of Birth format."),
-};
-
-
 function userValidations(user) {
     const schema = Joi.object({
-      name: userJoiValidations.name,
-      age: userJoiValidations.age,
-      email: userJoiValidations.email,
-      dateOfBirth: userJoiValidations.dateOfBirth,
+      name: Joi.string().pattern(/^[a-zA-Z\s]+$/).min(3).max(255).required()
+        .messages({
+          'string.pattern.base': 'Name should contain only alphabetical characters and spaces.',
+        }),
+      age: Joi.number().integer().min(0).required(),
+      email: Joi.string().email().required(),
+      dateOfBirth: Joi.date().iso().required(),
     });
   
     const result = schema.validate(user, { abortEarly: false });
@@ -98,4 +89,15 @@ function userValidations(user) {
   
     return errors;
   }
-module.exports = {userModel, userValidations};
+
+
+sequelize
+  .sync()
+  .then(() => {
+    console.log("userModel synchronized with the database(znz).");
+  })
+  .catch((error) => {
+    console.error("Error synchronizing userModel", error);
+  });
+
+module.exports = { userModel, userValidations };
