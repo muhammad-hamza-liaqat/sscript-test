@@ -30,33 +30,33 @@ const getAllUsers = async (req, res) => {
   try {
     let whereClause = {};
 
-    // Filtration by Name (case-insensitive partial match)
+    // filteration by name
     if (req.query.name) {
       whereClause.name = { [Op.like]: `%${req.query.name}%` };
     }
 
-    // Filtration by Age (exact match or range)
+    // exact match filteration for age
     if (req.query.age) {
-      if (req.query.age.includes('-')) {
-        const [minAge, maxAge] = req.query.age.split('-').map(Number);
-        whereClause.age = { [Op.between]: [minAge, maxAge] };
+      const exactAge = Number(req.query.age);
+      if (!isNaN(exactAge)) {
+        whereClause.age = exactAge;
       } else {
-        whereClause.age = Number(req.query.age);
+        return res.status(400).json({ status: 400, message: "Invalid age value provided!" });
       }
     }
 
-    // Filtration by Email (case-insensitive partial match)
+    // email filteration (regex expression)
     if (req.query.email) {
       whereClause.email = { [Op.like]: `%${req.query.email}%` };
     }
 
-    // Filtration by Date of Birth (range)
+    // Filtration by Date of Birth (dob)(range)
     if (req.query.dob) {
       if (req.query.dob.includes('-')) {
         const [startDate, endDate] = req.query.dob.split('-');
         whereClause.dateOfBirth = { [Op.between]: [startDate, endDate] };
       } else {
-        // Handle single date if needed
+        // single case without range
         whereClause.dateOfBirth = req.query.dob;
       }
     }
