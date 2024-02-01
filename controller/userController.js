@@ -35,13 +35,26 @@ const getAllUsers = async (req, res) => {
       whereClause.name = { [Op.like]: `%${req.query.name}%` };
     }
 
-    // exact match filteration for age
+    // exact match or range filteration for age
     if (req.query.age) {
-      const exactAge = Number(req.query.age);
-      if (!isNaN(exactAge)) {
-        whereClause.age = exactAge;
+      if (req.query.age.includes('-')) {
+        // Range case
+        const [minAge, maxAge] = req.query.age.split('-').map(Number);
+    
+        if (!isNaN(minAge) && !isNaN(maxAge)) {
+          whereClause.age = { [Op.between]: [minAge, maxAge] };
+        } else {
+          return res.status(400).json({ status: 400, message: "Invalid age range provided!" });
+        }
       } else {
-        return res.status(400).json({ status: 400, message: "Invalid age value provided!" });
+        // Exact match case
+        const exactAge = Number(req.query.age);
+    
+        if (!isNaN(exactAge)) {
+          whereClause.age = exactAge;
+        } else {
+          return res.status(400).json({ status: 400, message: "Invalid age value provided!" });
+        }
       }
     }
 
