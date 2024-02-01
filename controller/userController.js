@@ -38,7 +38,7 @@ const getAllUsers = async (req, res) => {
     // Exact match or range filteration for age
     if (req.query.age) {
       if (req.query.age.includes('-')) {
-        // Range case
+        // if there is any range
         const [minAge, maxAge] = req.query.age.split('-').map(Number);
 
         if (!isNaN(minAge) && !isNaN(maxAge)) {
@@ -75,8 +75,8 @@ const getAllUsers = async (req, res) => {
     }
 
     // Pagination parameters with default values
-    const page = req.query.page ? parseInt(req.query.page, 10) : 1;
-    const pageSize = req.query.pageSize ? parseInt(req.query.pageSize, 10) : 5;
+    const page = req.query.page ? parseInt(req.query.page, 10) : 1; // page set to 1 by default 
+    const pageSize = req.query.pageSize ? parseInt(req.query.pageSize, 10) : 5; // page per record set to 5
 
     // Sorting parameters
     const sortField = req.query.sortField || 'createdAt'; // Default to sorting by createdAt
