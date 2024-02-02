@@ -13,6 +13,7 @@
 - [Register User](http://localhost:8080/api/add-user)
 - [find users](http://localhost:8080/api/users)
 - [query params] (name, age, dob, page, pageSize, sortField, sortOrder asc or desc)
+- [find user with query params](http://localhost:8080/api/users?name=ram&age=20-50&dob=1995-06-24-2000-06-24&page=2&pageSize=10&sortField=email&sortOrder=desc)
 
 ####
 email will be unique
