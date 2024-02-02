@@ -13,3 +13,8 @@
 - [Register User](http://localhost:8080/api/add-user)
 - [find users](http://localhost:8080/api/users)
 - [query params] (name, age, dob, page, pageSize, sortField, sortOrder asc or desc)
+
+####
+email will be unique
+date of birth will be in ISO formar YYYY-MM-DD
+
